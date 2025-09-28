@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const port = 8080;
+const port = process.env.PORT || 8080;
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
@@ -66,7 +66,6 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
-
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
@@ -78,11 +77,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
+// ------------------ ROUTES ------------------
+
+// Root route → render homepage
 app.get("/", (req, res) => {
-  res.send("Hii I'm Root!");
+  res.render("home"); // make sure views/home.ejs exists
 });
 
+// Other routes
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
